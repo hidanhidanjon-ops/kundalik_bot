@@ -1,0 +1,4 @@
+*.exe
+*.db-shm
+*.db-wal
+
