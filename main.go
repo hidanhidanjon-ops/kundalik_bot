@@ -422,16 +422,16 @@ if appURL != "" {
 	}
 
 	// ==================== ASOSIY MENYU (/START) ====================
-	b.Handle("/start", func(c tele.Context) error {
-		userID := c.Sender().ID
-		isOwner, isAdmin := isOwnerOrAdmin(userID)
+    b.Handle("/start", func(c tele.Context) error {
+        userID := c.Sender().ID
+        isOwner, isAdmin := isOwnerOrAdmin(userID)
 
-		clearState(userID)
+        // Begona odam bo'lsa, hech qanday javob qaytarmaydi
+        if !isOwner && !isAdmin {
+            return nil
+        }
 
-		if !isOwner && !isAdmin {
-			return c.Send("⛔ Kechirasiz, sizga botdan foydalanish uchun ruxsat berilmagan.")
-		}
-
+        clearState(userID)
 		menu := &tele.ReplyMarkup{ResizeKeyboard: true}
 
 		btnSchool := menu.Text("🏫 Maktab va Sinflar")
