@@ -1,12 +1,14 @@
-# 1-bosqich: Go ilovani Linux uchun yig'ish
+# 1-bosqich: Go ilovani yig'ish (build)
 FROM golang:1.22-bookworm AS builder
 WORKDIR /app
-COPY go.mod go.sum ./
-RUN go mod download
+
+# Barcha fayllarni birdaniga ko'chiramiz
 COPY . .
+
+# go mod download o'rniga to'g'ridan-to'g'ri build qilamiz
 RUN CGO_ENABLED=0 GOOS=linux go build -o app .
 
-# 2-bosqich: Chromium brauzeri bilan ishlaydigan xavfsiz muhit
+# 2-bosqich: Chromium bilan ishlaydigan runtime muhit
 FROM debian:bookworm-slim
 RUN apt-get update && apt-get install -y \
     chromium \
@@ -21,7 +23,9 @@ ENV CHROME_BIN=/usr/bin/chromium
 
 WORKDIR /app
 COPY --from=builder /app/app .
-COPY .env .env
+
+# Agar .env fayli bo'lsa ko'chiradi, bo'lmasa xato bermaydi
+COPY .env* ./
 
 EXPOSE 10000
 
