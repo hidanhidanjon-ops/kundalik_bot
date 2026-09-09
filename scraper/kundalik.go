@@ -3,6 +3,8 @@ package scraper
 import (
 	"context"
 	"fmt"
+	"os"
+	"runtime"
 	"time"
 
 	"github.com/chromedp/cdproto/emulation"
@@ -21,6 +23,15 @@ func TakeGradeScreenshot(login, password string) ([]byte, error) {
 		chromedp.Flag("window-size", "1280,900"),
 		chromedp.UserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"),
 	)
+
+	// Agar Linux tizimi (Render/Docker) bo'lsa, Chromium manzilini o'rnatamiz
+	if runtime.GOOS == "linux" {
+		chromePath := os.Getenv("CHROME_BIN")
+		if chromePath == "" {
+			chromePath = "/usr/bin/chromium"
+		}
+		opts = append(opts, chromedp.ExecPath(chromePath))
+	}
 
 	allocCtx, cancelAlloc := chromedp.NewExecAllocator(context.Background(), opts...)
 	defer cancelAlloc()
